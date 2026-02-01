@@ -1,8 +1,8 @@
 # Agentic Honey-Pot for Scam Detection
 
 ## Team Members
-SHIVANI KHICHI
-ADITYA GUPTA
+SHIVANI KHICHI<BR>
+ADITYA GUPTA<BR>
 YOKESH
 
 ## Problem Statement
