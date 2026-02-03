@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agentic Honey-Pot</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .container {
+      background: white;
+      width: 400px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .chat {
+      height: 200px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .msg {
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 8px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 15px;
+      background: #eef2ff;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🕵️ Agentic Honey-Pot</h2>
+
+  <div id="chat" class="chat"></div>
+
+  <input id="messageInput" type="text" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Analyze</button>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+  const API_URL = "http://127.0.0.1:8000/analyze";
+  const API_KEY = "test123";
+
+  let messages = [];
+
+  function sendMessage() {
+    const input = document.getElementById("messageInput");
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    messages.push({
+      sender: "user",
+      text: text
+    });
+
+    updateChat();
+    input.value = "";
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+      },
+      body: JSON.stringify({
+        conversation_id: "conv-001",
+        messages: messages
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("result").innerHTML = `
+        <b>Scam Detected:</b> ${data.scam_detected}<br>
+        <b>Agent Activated:</b> ${data.agent_activated}<br>
+        <b>Confidence Score:</b> ${data.confidence_score}<br>
+        <b>Engagement Turns:</b> ${data.engagement_turns}
+      `;
+    })
+    .catch(() => {
+      alert("Backend not reachable");
+    });
+  }
+
+  function updateChat() {
+    const chat = document.getElementById("chat");
+    chat.innerHTML = "";
+
+    messages.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.innerHTML = `<b>${m.sender}:</b> ${m.text}`;
+      chat.appendChild(div);
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
